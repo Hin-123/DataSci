@@ -42,21 +42,26 @@ with st.sidebar:
 
 # --- 4. การแสดงผลการทำนาย (Prediction) ---
 if st.button("🚀 วิเคราะห์และทำนายผล"):
-    # เตรียมข้อมูลให้ตรงกับ Format ที่ Pipeline ต้องการ
-    input_df = pd.DataFrame([{
-        'price': price,
-        'ccu': ccu,
-        'positive': positive,
-        'negative': negative,
-        'developer': developer
-    }])
+    # ตรวจสอบก่อนว่าตัวแปร model ถูกสร้างขึ้นมาหรือยัง (จากการ load ไฟล์ .pkl)
+    if 'model' in locals(): 
+        # เตรียมข้อมูลให้ตรงกับ Format ที่ Pipeline ต้องการ
+        input_df = pd.DataFrame([{
+            'price': price,
+            'ccu': ccu,
+            'positive': positive,
+            'negative': negative,
+            'developer': developer
+        }])
 
-    # ทำนายผล
-    prediction = model.predict(input_df)[0]
-    
-    # แสดงผลลัพธ์
-    st.markdown("---")
-    col1, col2 = st.columns(2)
+        # ทำนายผล
+        prediction = model.predict(input_df)[0]
+        
+        # แสดงผลลัพธ์
+        st.markdown("---")
+        st.success(f"### คาดการณ์จำนวนเจ้าของเกม: {int(prediction):,} คน")
+    else:
+        # ถ้าโหลดโมเดลไม่สำเร็จ ให้แสดงข้อความเตือนแทนที่จะ Error (NameError)
+        st.error("⚠️ ไม่สามารถทำนายผลได้ เนื่องจากระบบหาไฟล์ 'steam_success_model.pkl' ไม่เจอ")
     
     with col1:
         st.subheader("📊 ผลการคาดการณ์")
